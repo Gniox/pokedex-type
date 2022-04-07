@@ -5,6 +5,7 @@ type color = {
 };
 
 //TODO: stop loadin from flashbanging
+//TODO: Make font sizes change (media query)
 
 export default createGlobalStyle<color>`
   @font-face {

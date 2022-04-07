@@ -35,6 +35,7 @@ interface Props {
 }
 //TODO: make li display:inline, for
 //      horizontal alignment
+//TODO: on searchbar click, it changes navbar to correct slice
 const NavBar: React.FC<Props> = ({ generation, pokemon }) => {
   type pokeSpecies = {
     name: string;
@@ -71,6 +72,7 @@ const NavBar: React.FC<Props> = ({ generation, pokemon }) => {
           const newOffSet = 0;
           const newLimit = 6;
           setPokeList(sortedPokemon);
+          console.log(sortedPokemon);
           setListShown(sortedPokemon.slice(newOffSet, newLimit));
           dispatch(
             assignPokeNumber(parseInt(getPokeNumber(sortedPokemon[0].url)))
@@ -133,12 +135,7 @@ const NavBar: React.FC<Props> = ({ generation, pokemon }) => {
         <StyledList>
           {listShown.map((item) => {
             return (
-              <NavBarItem
-                key={uuidv4()}
-                name={item.name}
-                url={item.url}
-                // pokemon={pokemon}
-              />
+              <NavBarItem key={uuidv4()} name={item.name} url={item.url} />
             );
           })}
         </StyledList>

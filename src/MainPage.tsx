@@ -19,7 +19,6 @@ const Load = styled.div`
   display: flex;
   width: 300px;
   height: 300px;
-  background-color: blue;
   transition: opacity 2s;
 `;
 
@@ -51,7 +50,8 @@ const Side = styled.div`
 // changes, everything will have to be refetched?
 //TODO: implement lazy loading
 //TODO: make sure next button stay within pokelist constraints
-//TODO: make responsive
+//TODO: make responsive /kindo fdone
+//TODO: reduce amount of fetch requests...
 
 const MainPage: React.FC = () => {
   const generation = useSelector((state: rootState) => state.genNumber.value);

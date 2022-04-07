@@ -23,12 +23,11 @@ const StyledListItem = styled.li`
 interface Props {
   name: string;
   url: string;
-  key: string;
   // pokemon: number;
 }
 
 //TODO: underline listitem if  pokemon matches pokenumber
-const NavBarItem: React.FC<Props> = ({ name, url, key }) => {
+const NavBarItem: React.FC<Props> = ({ name, url }) => {
   const dispatch = useDispatch();
   const pokeNumber = getPokeNumber(url);
   const currentPokemon = useSelector(

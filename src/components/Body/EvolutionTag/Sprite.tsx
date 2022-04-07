@@ -4,6 +4,7 @@ import { formatName } from '../../../functions/formatName';
 import { useDispatch } from 'react-redux';
 import { assignCurrentColor } from '../../../store/colorReducer';
 import { assignPokeNumber } from '../../../store/PokeReducer';
+import { isHidden } from '../../../store/hiddenReducer';
 import { getContrastColor } from '../../../functions/color';
 
 const Container = styled.div`
@@ -79,6 +80,7 @@ const Sprite: React.FC<Props> = ({ pokemon, color }) => {
   function EvoClick(number: number, nextColor: string) {
     dispatch(assignPokeNumber(number));
     dispatch(assignCurrentColor(nextColor));
+    dispatch(isHidden(true));
   }
 
   return (

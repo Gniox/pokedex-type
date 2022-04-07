@@ -4,7 +4,12 @@ export const pokeNumberSlice = createSlice({
   name: 'pokeNumber',
   initialState: {
     value: 1,
-    arr: [{ name: '', url: '' }],
+    arr: [
+      {
+        name: 'bulbasaur',
+        url: 'https://pokeapi.co/api/v2/pokemon-species/1/',
+      },
+    ],
   },
   reducers: {
     increment: (state) => {

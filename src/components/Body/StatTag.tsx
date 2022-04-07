@@ -2,7 +2,6 @@ import React from 'react';
 import * as s from '../../styles/div.styled';
 import styled, { keyframes } from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
-import { getContrastColor } from '../../functions/color';
 
 //TODO: make width of bar container scale
 const BarContainer = styled.div`
@@ -11,10 +10,15 @@ const BarContainer = styled.div`
   flex-direction: column;
 
   @media only screen and (min-width: 768px) {
-    display: flex;
     width: 10vw;
-    max-width: 20vw;
-    flex-direction: column;
+  }
+
+  @media only screen and (min-width: 1200px) {
+    width: 15vw;
+  }
+
+  @media only screen and (min-width: 1440px) {
+    width: 20vw;
   }
 `;
 
@@ -85,6 +89,25 @@ function extractStats(stats: stat[]) {
   return baseStats;
 }
 
+function formatStats(stat: string) {
+  switch (stat) {
+    case 'hp':
+      return 'HP';
+    case 'attack':
+      return 'Attack';
+    case 'defense':
+      return 'Defense';
+    case 'special-attack':
+      return 'Sp. Attack';
+    case 'special-defense':
+      return 'Sp. Defense';
+    case 'speed':
+      return 'Speed';
+    default:
+      break;
+  }
+}
+
 function calculateTotal(stats: stat[]) {
   const baseStats = extractStats(stats);
   const intialValue = 0;
@@ -110,12 +133,15 @@ const StatTag: React.FC<Props> = ({ stats }) => {
 
   return (
     <s.Tag>
+      {console.log(stats)}
       <OutsideContainer>
         <h2>Base Stats</h2>
         <Container>
           <ItemContainer>
             {stats.map((item) => {
-              return <StatDiv key={uuidv4()}>{item.stat.name}</StatDiv>;
+              return (
+                <StatDiv key={uuidv4()}>{formatStats(item.stat.name)}</StatDiv>
+              );
             })}
             <StatDiv>Total</StatDiv>
           </ItemContainer>

@@ -15,6 +15,7 @@ const OutsideContainer = styled.div`
 const Container = styled.div`
   display: flex;
   flex-direction: row;
+  margin-top: 5px;
 `;
 
 type chain = {

@@ -4,6 +4,9 @@ import NavBar from './NavBar/NavBar';
 import SearchButton from './SearchMenu/SearchButton';
 import styled from 'styled-components';
 import SearchMenu from './SearchMenu/SearchMenu';
+import { useDispatch, useSelector } from 'react-redux';
+import { rootState } from '../../store/store';
+import { isHidden } from '../../store/hiddenReducer';
 
 const Container = styled.div`
   display: flex;
@@ -30,7 +33,8 @@ interface Props {
 }
 
 const Header: React.FC<Props> = ({ generation, pokemon }) => {
-  const [hidden, setHidden] = useState(true);
+  const hidden = useSelector((state: rootState) => state.hidden.value);
+  const dispatch = useDispatch();
 
   return (
     <Container>
@@ -44,7 +48,7 @@ const Header: React.FC<Props> = ({ generation, pokemon }) => {
       <Side>
         <SearchButton
           hidden={hidden}
-          onClick={() => setHidden(hidden ? false : true)}
+          onClick={() => dispatch(isHidden(hidden ? false : true))}
         />
       </Side>
     </Container>
