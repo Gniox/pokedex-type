@@ -4,6 +4,8 @@ import UpArrow from './UpArrow';
 import DownArrow from './DownArrow';
 import GenerationCounterItem from './GenerationCounterItem';
 import styled, { keyframes } from 'styled-components';
+import { rootState } from '../../../store/store';
+import { useSelector } from 'react-redux';
 
 const fadeAnimation = keyframes`
   0% { opacity: 0;}
@@ -38,7 +40,10 @@ const GenerationCounter: React.FC<Props> = ({ generation }) => {
     results: [genItem];
   }
 
-  const [generationList, setGenerationList] = React.useState<genItem[]>([]);
+  const generationList = useSelector(
+    (state: rootState) => state.genNumber.generation
+  );
+  // const [generationList, setGenerationList] = React.useState<genItem[]>([]);
   const [listShown, setListShown] = React.useState<genItem[]>([]);
   const [limit, setLimit] = React.useState(3);
   const [offset, setOffSet] = React.useState(0);
@@ -46,22 +51,25 @@ const GenerationCounter: React.FC<Props> = ({ generation }) => {
   //use effect for fetch requests
   useEffect(() => {
     let isMounted = true;
-    fetch('https://pokeapi.co/api/v2/generation')
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw response;
-      })
-      .then((data: genList) => {
-        if (isMounted) {
-          setGenerationList(data.results);
-          setListShown(data.results.slice(offset, limit));
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching data: ' + error);
-      });
+    if (isMounted) {
+      setListShown(generationList.slice(offset, limit));
+    }
+    // fetch('https://pokeapi.co/api/v2/generation')
+    //   .then((response) => {
+    //     if (response.ok) {
+    //       return response.json();
+    //     }
+    //     throw response;
+    //   })
+    //   .then((data: genList) => {
+    //     if (isMounted) {
+    //       setGenerationList(data.results);
+    //       setListShown(data.results.slice(offset, limit));
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error fetching data: ' + error);
+    //   });
     return () => {
       isMounted = false;
     };

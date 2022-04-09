@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { assignGenNumber } from '../../../store/GenReducer';
 import { rootState } from '../../../store/store';
 import { getPokeNumber } from '../../../functions/getPokeNumber';
+import { fetchPokemon } from '../../../store/fetchPokemon';
+import { fetchIndividualPokemon } from '../../../store/fetchIndividualPokemon';
 
 const StyledListItem = styled.li`
   margin-bottom: 5px;
@@ -78,21 +80,50 @@ const GenerationCounterItem: React.FC<Props> = ({
     (state: rootState) => state.genNumber.value
   );
   const formattedGeneration = formatGeneration(name, index, generation);
+  // const [firstPokemon, setFirstPokemon] = useState(0);
+
+  // useEffect(() => {
+  //   let isMounted = true;
+  //   fetch(`https://pokeapi.co/api/v2/generation/${generation}`)
+  //     .then((response) => {
+  //       if (response.ok) {
+  //         return response.json();
+  //       }
+  //       throw response;
+  //     })
+  //     .then((data) => {
+  //       if (isMounted) {
+  //         const firstPokemon = parseInt(
+  //           getPokeNumber(data.pokemon_species[0].url)
+  //         );
+  //         setFirstPokemon(firstPokemon);
+  //       }
+  //       return () => {
+  //         isMounted = false;
+  //       };
+  //     });
+  // });
+
+  //To fetch from store in functions, capitalize function name
+  async function OnClick() {
+    const generationNumber = convertRomanToNumerical(name);
+    dispatch(assignGenNumber(generationNumber));
+    dispatch(fetchPokemon(generationNumber));
+    // dispatch(fetchIndividualPokemon(firstPokemon));
+  }
 
   if (currentGeneration === parseInt(getPokeNumber(url))) {
     return (
       <StyledListItem
         style={{ textDecoration: 'underline' }}
-        onClick={() => dispatch(assignGenNumber(convertRomanToNumerical(name)))}
+        onClick={() => OnClick()}
       >
         {formattedGeneration}
       </StyledListItem>
     );
   } else {
     return (
-      <StyledListItem
-        onClick={() => dispatch(assignGenNumber(convertRomanToNumerical(name)))}
-      >
+      <StyledListItem onClick={() => OnClick()}>
         {formattedGeneration}
       </StyledListItem>
     );

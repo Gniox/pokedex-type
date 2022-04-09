@@ -6,10 +6,13 @@ import LeftArrow from './LeftArrow';
 import RightArrow from './RightArrow';
 import NavBarItem from './NavBarItem';
 import { getPokeNumber } from '../../../functions/getPokeNumber';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { rootState } from '../../../store/store';
 import { assignPokeNumber, assignPokeList } from '../../../store/PokeReducer';
 import { assignCurrentColor } from '../../../store/colorReducer';
 import { getContrastColor } from '../../../functions/color';
+import { fetchIndividualPokemon } from '../../../store/fetchIndividualPokemon';
+import { fetchColor } from '../../../store/fetchColor';
 
 const Div = styled.div`
   display: flex;
@@ -48,7 +51,8 @@ const NavBar: React.FC<Props> = ({ generation, pokemon }) => {
 
   const dispatch = useDispatch();
 
-  const [pokeList, setPokeList] = React.useState<pokeSpecies[]>([]);
+  const pokeList = useSelector((state: rootState) => state.pokeNumber.arr);
+  // const [pokeList, setPokeList] = React.useState<pokeSpecies[]>([]);
   const [listShown, setListShown] = React.useState<pokeSpecies[]>([]);
   const [limit, setLimit] = React.useState(6);
   const [offset, setOffSet] = React.useState(0);
@@ -58,51 +62,79 @@ const NavBar: React.FC<Props> = ({ generation, pokemon }) => {
   //      if it has changed, and it will call it once more !!!!
   useEffect(() => {
     let isMounted = true;
-    const url = `https://pokeapi.co/api/v2/generation/${generation}/`;
-    fetch(url)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw response;
-      })
-      .then((data) => {
-        if (isMounted) {
-          const sortedPokemon = sortPokemon(data.pokemon_species);
-          const newOffSet = 0;
-          const newLimit = 6;
-          setPokeList(sortedPokemon);
-          console.log(sortedPokemon);
-          setListShown(sortedPokemon.slice(newOffSet, newLimit));
-          dispatch(
-            assignPokeNumber(parseInt(getPokeNumber(sortedPokemon[0].url)))
-          );
-          dispatch(assignPokeList(sortedPokemon));
-          setLimit(newLimit);
-          setOffSet(newOffSet);
+    // const url = `https://pokeapi.co/api/v2/generation/${generation}/`;
+    // fetch(url)
+    //   .then((response) => {
+    //     if (response.ok) {
+    //       return response.json();
+    //     }
+    //     throw response;
+    //   })
+    //   .then((data) => {
+    //     if (isMounted) {
+    //       const sortedPokemon = sortPokemon(data.pokemon_species);
+    //       const newOffSet = 0;
+    //       const newLimit = 6;
+    //       setPokeList(sortedPokemon);
+    //       console.log(sortedPokemon);
+    //       setListShown(sortedPokemon.slice(newOffSet, newLimit));
+    //       dispatch(
+    //         assignPokeNumber(parseInt(getPokeNumber(sortedPokemon[0].url)))
+    //       );
+    //       dispatch(assignPokeList(sortedPokemon));
+    //       setLimit(newLimit);
+    //       setOffSet(newOffSet);
+    if (isMounted) {
+      const newOffSet = 0;
+      const newLimit = 6;
+      const pokeNum = parseInt(getPokeNumber(pokeList[0].url));
+      setListShown(pokeList.slice(newOffSet, newLimit));
+      dispatch(assignPokeNumber(pokeNum));
+      dispatch(fetchIndividualPokemon(pokeNum));
+      dispatch(fetchColor(pokeNum));
+      setLimit(newLimit);
+      setOffSet(newOffSet);
+    }
+    //   fetch(pokeList[0].url)
+    //     .then((response) => {
+    //       if (response.ok) {
+    //         return response.json();
+    //       }
+    //       throw response;
+    //     })
+    //     .then((data) => {
+    //       if (isMounted) {
+    //         const background = getContrastColor(data.color.name);
+    //         dispatch(assignCurrentColor(background));
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.error('Error fetching data: ' + error);
+    //     });
+    // }
 
-          fetch(sortedPokemon[0].url)
-            .then((response) => {
-              if (response.ok) {
-                return response.json();
-              }
-              throw response;
-            })
-            .then((data) => {
-              if (isMounted) {
-                const background = getContrastColor(data.color.name);
-                dispatch(assignCurrentColor(background));
-              }
-            });
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching data: ' + error);
-      });
+    //     fetch(sortedPokemon[0].url)
+    //       .then((response) => {
+    //         if (response.ok) {
+    //           return response.json();
+    //         }
+    //         throw response;
+    //       })
+    //       .then((data) => {
+    //         if (isMounted) {
+    //           const background = getContrastColor(data.color.name);
+    //           dispatch(assignCurrentColor(background));
+    //         }
+    //       });
+    //   }
+    // })
+    // .catch((error) => {
+    //   console.error('Error fetching data: ' + error);
+    // });
     return () => {
       isMounted = false;
     };
-  }, [generation]);
+  }, [generation, pokeList, dispatch]);
 
   function moveListUpBySix() {
     const newLimit = limit + 6;

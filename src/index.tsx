@@ -3,6 +3,13 @@ import ReactDOM from 'react-dom';
 import MainPage from './MainPage';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
+import { fetchGenerations } from './store/fetchGenerations';
+import { fetchPokemon } from './store/fetchPokemon';
+import { fetchIndividualPokemon } from './store/fetchIndividualPokemon';
+
+store.dispatch(fetchGenerations());
+store.dispatch(fetchPokemon(1));
+store.dispatch(fetchIndividualPokemon(1));
 
 ReactDOM.render(
   <React.StrictMode>

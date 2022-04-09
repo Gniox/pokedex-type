@@ -6,6 +6,7 @@ import { assignPokeNumber } from '../../../store/PokeReducer';
 import { assignCurrentColor } from '../../../store/colorReducer';
 import { getContrastColor } from '../../../functions/color';
 import { rootState } from '../../../store/store';
+import { fetchIndividualPokemon } from '../../../store/fetchIndividualPokemon';
 
 const StyledListItem = styled.li`
   display: inline;
@@ -58,7 +59,9 @@ const NavBarItem: React.FC<Props> = ({ name, url }) => {
     };
   });
   function onClick(pokeNumber: string, color: string) {
-    dispatch(assignPokeNumber(parseInt(pokeNumber)));
+    const pokeNum = parseInt(pokeNumber);
+    dispatch(assignPokeNumber(pokeNum));
+    dispatch(fetchIndividualPokemon(pokeNum));
     dispatch(assignCurrentColor(color));
   }
 

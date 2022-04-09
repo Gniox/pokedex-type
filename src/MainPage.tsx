@@ -11,6 +11,8 @@ import NextButton from './components/NextButton';
 import { decrement, increment } from './store/PokeReducer';
 import { getContrastColor } from './functions/color';
 import { assignCurrentColor } from './store/colorReducer';
+import { fetchGenerations } from './store/fetchGenerations';
+import { fetchColor } from './store/fetchColor';
 
 const Header = React.lazy(() => import('./components/Header/Header'));
 const Body = React.lazy(() => import('./components/Body/Body'));
@@ -58,64 +60,60 @@ const MainPage: React.FC = () => {
   const pokemon = useSelector((state: rootState) => state.pokeNumber.value);
   const color = useSelector((state: rootState) => state.color.currentValue);
   const dispatch = useDispatch();
-  const [previousColor, setPreviousColor] = useState('');
-  const [nextColor, setNextColor] = useState('');
+  // const [previousColor, setPreviousColor] = useState('');
+  // const [nextColor, setNextColor] = useState('');
 
-  useEffect(() => {
-    let isMounted = true;
-    if (pokemon - 1 > 0) {
-      fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon - 1}`)
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw response;
-        })
-        .then((data) => {
-          if (isMounted) {
-            const background = getContrastColor(data.color.name);
-            setPreviousColor(background);
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching data: ' + error);
-        });
-    }
-    fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon + 1}`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw response;
-      })
-      .then((data) => {
-        if (isMounted) {
-          const background = getContrastColor(data.color.name);
-          setNextColor(background);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching data: ' + error);
-      });
-    return () => {
-      isMounted = false;
-    };
-  }, [pokemon]);
+  // useEffect(() => {
+  //   let isMounted = true;
+  //   if (pokemon - 1 > 0) {
+  //     fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon - 1}`)
+  //       .then((response) => {
+  //         if (response.ok) {
+  //           return response.json();
+  //         }
+  //         throw response;
+  //       })
+  //       .then((data) => {
+  //         if (isMounted) {
+  //           const background = getContrastColor(data.color.name);
+  //           setPreviousColor(background);
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error fetching data: ' + error);
+  //       });
+  //   }
+  //   fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon + 1}`)
+  //     .then((response) => {
+  //       if (response.ok) {
+  //         return response.json();
+  //       }
+  //       throw response;
+  //     })
+  //     .then((data) => {
+  //       if (isMounted) {
+  //         const background = getContrastColor(data.color.name);
+  //         setNextColor(background);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching data: ' + error);
+  //     });
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, [pokemon]);
 
   function Previous() {
     dispatch(decrement());
     if (pokemon >= 2) {
-      dispatch(assignCurrentColor(previousColor));
+      dispatch(fetchColor(pokemon - 1));
     }
-
-    console.log('previous: ' + previousColor);
   }
 
   function Next() {
     dispatch(increment());
-    dispatch(assignCurrentColor(nextColor));
-
-    console.log('next: ' + nextColor);
+    dispatch(fetchColor(pokemon + 1));
   }
 
   return (
@@ -131,7 +129,7 @@ const MainPage: React.FC = () => {
           </Side>
           <Center>
             <Suspense fallback={<Load />}>
-              <Body pokemon={pokemon} />
+              <Body pokemon={pokemon} generation={generation} />
             </Suspense>
           </Center>
           <Side>

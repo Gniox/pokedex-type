@@ -2,8 +2,10 @@ import React, { useEffect, Suspense } from 'react';
 import styled from 'styled-components';
 import NameTag from './NameTag';
 import DescriptionTag from './DescriptionTag';
+import { useSelector } from 'react-redux';
 // import StatTag from './StatTag';
 // import EvolutionTag from './EvolutionTag/EvolutionTag';
+import { rootState } from '../../store/store';
 const PokePic = React.lazy(() => import('./PokePic'));
 const StatTag = React.lazy(() => import('./StatTag'));
 const EvolutionTag = React.lazy(() => import('./EvolutionTag/EvolutionTag'));
@@ -40,12 +42,13 @@ const Container = styled.div`
 
 interface Props {
   pokemon: number;
+  generation: number;
 }
 
 //TODO: implement lazy load for main page, instead of just picture
 //TODO: implement divs to not change size depending on stuff
 //TODO: On generation click everything updates three times( because of evo chain?)
-const Body: React.FC<Props> = ({ pokemon }) => {
+const Body: React.FC<Props> = ({ generation, pokemon }) => {
   //TODO: put types into another file...
   type ability = {
     ability: {
@@ -85,6 +88,17 @@ const Body: React.FC<Props> = ({ pokemon }) => {
   //   },
   // };
 
+  type poke = {
+    name: string;
+    height: number;
+    weight: number;
+    abilities: ability[];
+    stats: stat[];
+  };
+
+  const singlePokemon: poke = useSelector(
+    (state: rootState) => state.pokeNumber.pokemon
+  );
   const [pokeName, setPokeName] = React.useState('');
   const [flavorText, setFlavorText] = React.useState('');
   const [height, setHeight] = React.useState(0);
@@ -95,29 +109,36 @@ const Body: React.FC<Props> = ({ pokemon }) => {
   //Two fetch request in useEffect... Is this okay?
   useEffect(() => {
     let isMounted = true;
-    fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw response;
-      })
-      .then((data) => {
-        if (isMounted) {
-          setPokeName(data.name);
-          setHeight(data.height);
-          setWeight(data.weight);
-          setAbilities(data.abilities);
-          setBaseStats(data.stats);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching data: ' + error);
-      });
+    // fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`)
+    //   .then((response) => {
+    //     if (response.ok) {
+    //       return response.json();
+    //     }
+    //     throw response;
+    //   })
+    //   .then((data) => {
+    //     if (isMounted) {
+    //       setPokeName(data.name);
+    //       setHeight(data.height);
+    //       setWeight(data.weight);
+    //       setAbilities(data.abilities);
+    //       setBaseStats(data.stats);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error fetching data: ' + error);
+    //   });
+    if (isMounted) {
+      setPokeName(singlePokemon.name);
+      setHeight(singlePokemon.height);
+      setWeight(singlePokemon.weight);
+      setAbilities(singlePokemon.abilities);
+      setBaseStats(singlePokemon.stats);
+    }
     return () => {
       isMounted = false;
     };
-  }, [pokemon]);
+  }, [singlePokemon, pokemon, generation]);
 
   return (
     <OutsideContainer>
