@@ -13,6 +13,7 @@ import { getContrastColor } from './functions/color';
 import { assignCurrentColor } from './store/colorReducer';
 import { fetchGenerations } from './store/fetchGenerations';
 import { fetchColor } from './store/fetchColor';
+import { fetchIndividualPokemon } from './store/fetchIndividualPokemon';
 
 const Header = React.lazy(() => import('./components/Header/Header'));
 const Body = React.lazy(() => import('./components/Body/Body'));
@@ -108,12 +109,14 @@ const MainPage: React.FC = () => {
     dispatch(decrement());
     if (pokemon >= 2) {
       dispatch(fetchColor(pokemon - 1));
+      dispatch(fetchIndividualPokemon(pokemon - 1));
     }
   }
 
   function Next() {
     dispatch(increment());
     dispatch(fetchColor(pokemon + 1));
+    dispatch(fetchIndividualPokemon(pokemon + 1));
   }
 
   return (

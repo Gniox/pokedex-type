@@ -6,6 +6,8 @@ import { assignCurrentColor } from '../../../store/colorReducer';
 import { assignPokeNumber } from '../../../store/PokeReducer';
 import { isHidden } from '../../../store/hiddenReducer';
 import { getContrastColor } from '../../../functions/color';
+import { fetchColor } from '../../../store/fetchColor';
+import { fetchIndividualPokemon } from '../../../store/fetchIndividualPokemon';
 
 const Container = styled.div`
   display: flex;
@@ -51,35 +53,36 @@ interface Props {
 
 const Sprite: React.FC<Props> = ({ pokemon, color }) => {
   const dispatch = useDispatch();
-  const [nextColor, setNextColor] = useState('');
+  // const [nextColor, setNextColor] = useState('');
 
-  useEffect(() => {
-    let isMounted = true;
+  // useEffect(() => {
+  //   let isMounted = true;
 
-    fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.number}`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw response;
-      })
-      .then((data) => {
-        if (isMounted) {
-          const color = getContrastColor(data.color.name);
-          setNextColor(color);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching data: ' + error);
-      });
-    return () => {
-      isMounted = false;
-    };
-  }, [pokemon]);
+  //   fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.number}`)
+  //     .then((response) => {
+  //       if (response.ok) {
+  //         return response.json();
+  //       }
+  //       throw response;
+  //     })
+  //     .then((data) => {
+  //       if (isMounted) {
+  //         const color = getContrastColor(data.color.name);
+  //         setNextColor(color);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching data: ' + error);
+  //     });
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, [pokemon]);
 
-  function EvoClick(number: number, nextColor: string) {
+  function EvoClick(number: number) {
     dispatch(assignPokeNumber(number));
-    dispatch(assignCurrentColor(nextColor));
+    dispatch(fetchColor(number));
+    dispatch(fetchIndividualPokemon(number));
     dispatch(isHidden(true));
   }
 
@@ -89,7 +92,7 @@ const Sprite: React.FC<Props> = ({ pokemon, color }) => {
         src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.number}.png`}
         alt={pokemon.name}
         current={color}
-        onClick={() => EvoClick(pokemon.number, nextColor)}
+        onClick={() => EvoClick(pokemon.number)}
       />
       <h3>{formatName(pokemon.name)}</h3>
     </ItemContainer>

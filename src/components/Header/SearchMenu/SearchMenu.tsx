@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { sortPokemon } from '../../../functions/sortPokemon';
 import { formatNumber, getPokeNumber } from '../../../functions/getPokeNumber';
@@ -26,6 +26,7 @@ const Container = styled.div`
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.5));
   backdrop-filter: blur(4px);
   box-sizing: border-box;
+  flex-direction: column;
   border-radius: 10px;
   z-index: 2;
 `;
@@ -57,6 +58,19 @@ const AnotherContainer = styled.div`
   margin: 1em;
 `;
 
+const InputContainer = styled.div`
+  display: flex;
+  margin: 1em;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Input = styled.input`
+  color: black;
+  width: 20vw;
+  font-size: 
+  border-radius: 10px;
+`;
 type pokeSpecies = {
   name: string;
   url: string;
@@ -90,6 +104,7 @@ interface Props {
 const SearchMenu: React.FC<Props> = ({ hidden, generation }) => {
   const pokemon = useSelector((state: rootState) => state.pokeNumber.arr);
   const pokeList = formatList(pokemon);
+  const [listShown, setListShown] = useState(pokeList);
   // const [pokeList, setPokeList] = React.useState<poke[]>([]);
   const color = useSelector((state: rootState) => state.color.currentValue);
   // useEffect(() => {
@@ -123,11 +138,37 @@ const SearchMenu: React.FC<Props> = ({ hidden, generation }) => {
   //   };
   // }, [generation]);
 
+  function filterList(e: React.FormEvent<HTMLInputElement>) {
+    const tempList = pokeList;
+    const newList = tempList.filter(
+      (item) =>
+        item.name.includes(e.currentTarget.value) ||
+        item.number === parseInt(e.currentTarget.value)
+    );
+
+    console.log(newList);
+    console.log(e.currentTarget.value);
+    setListShown(newList);
+
+    // if (e.currentTarget.value.length === 0) {
+    //   setListShown(pokeList);
+    // }
+  }
+
   return (
     <>
       <Container hidden={hidden}>
+        <InputContainer>
+          <Input
+            placeholder="Search Name/Number Here"
+            onInput={(e) => {
+              filterList(e);
+            }}
+          />
+        </InputContainer>
+
         <OutsideContainer color={color}>
-          {pokeList.map((item) => {
+          {listShown.map((item) => {
             return (
               <AnotherContainer key={uuidv4()}>
                 <h3>{formatNumber(item.number.toString())}</h3>
